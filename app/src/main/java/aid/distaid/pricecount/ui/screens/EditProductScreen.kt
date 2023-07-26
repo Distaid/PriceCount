@@ -66,7 +66,7 @@ fun EditProductScreen(
     val dbHandler = AidDbHandler(context)
 
     var editableProduct by remember {
-        mutableStateOf(dbHandler.getProductById(productId)!!)
+        mutableStateOf(dbHandler.productsHandler.getById(productId)!!)
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
@@ -93,7 +93,7 @@ fun EditProductScreen(
     }
 
     fun saveItem() {
-        dbHandler.updateProduct(editableProduct)
+        dbHandler.productsHandler.update(editableProduct)
         navController.popBackStack()
     }
 

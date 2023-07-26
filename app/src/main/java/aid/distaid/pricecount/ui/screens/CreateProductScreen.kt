@@ -95,7 +95,7 @@ fun CreateItemScreen(
     }
 
     fun saveItem() {
-        dbHandler.addProduct(newProduct)
+        dbHandler.productsHandler.add(newProduct)
         navController.popBackStack()
     }
 

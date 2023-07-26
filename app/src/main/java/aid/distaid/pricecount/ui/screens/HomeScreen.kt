@@ -26,7 +26,7 @@ fun HomeScreen(
     val dbHandler = AidDbHandler(LocalContext.current)
 
     val products = remember {
-        dbHandler.getAllProducts()
+        dbHandler.productsHandler.getAll()
     }
 
     fun getTotalSum(): Float {
@@ -68,9 +68,9 @@ fun HomeScreen(
                             }
                         },
                         onRemove = {
-                            dbHandler.deleteProduct(item)
+                            dbHandler.productsHandler.delete(item)
                             products.clear()
-                            products.addAll(dbHandler.getAllProducts())
+                            products.addAll(dbHandler.productsHandler.getAll())
                         }
                     )
                 }
