@@ -3,7 +3,7 @@ name: Test_and_build_artifacts_on_release
 on:
     push:
         branches:
-            - 'main'
+            - main
 
 jobs:
     build_apk:
