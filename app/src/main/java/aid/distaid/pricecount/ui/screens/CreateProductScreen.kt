@@ -72,9 +72,7 @@ fun CreateItemScreen(
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
         newProduct = if (uri != null) {
             val source = ImageDecoder.createSource(context.contentResolver, uri)
-            newProduct.copy(image = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
-                decoder.isMutableRequired = true
-            })
+            newProduct.copy(image = ImageDecoder.decodeBitmap(source))
         } else {
             newProduct.copy(image = null)
         }
