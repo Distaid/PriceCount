@@ -36,5 +36,5 @@ jobs:
             -   name: Upload APK
                 uses: actions/upload-artifact@v3
                 with:
-                    name: "$APP_NAME-$VERSION_NAME.apk"
-                    path: "app/build/outputs/apk/release/$APP_NAME-$VERSION_NAME.apk"
+                    name: "${{ env.APP_NAME }}-${{ env.VERSION_NAME }}.apk"
+                    path: "app/build/outputs/apk/release/${{ env.APP_NAME }}-${{ env.VERSION_NAME }}.apk"
