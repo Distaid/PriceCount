@@ -2,6 +2,9 @@ name: Test and build artifacts on release
 
 on: [ pull_request, push ]
 
+env:
+    APP_NAME: "Price Counter"
+
 jobs:
     build_apk:
         name: Build release artifacts
@@ -19,6 +22,11 @@ jobs:
             -   name: Grant execute permission for gradlew
                 run: chmod +x gradlew
 
+            -   name: Extract existing version name
+                run: |
+                    version_name=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '\n')
+                    echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
+
             -   name: Build release APK after test
                 run: |
                     ./gradlew test
@@ -28,5 +36,5 @@ jobs:
             -   name: Upload APK
                 uses: actions/upload-artifact@v3
                 with:
-                    name: app-release.apk
-                    path: app/build/outputs/apk/release/app-release-unsigned.apk
+                    name: $APP_NAME-$VERSION_NAME.apk
+                    path: app/build/outputs/apk/release/$APP_NAME-$VERSION_NAME.apk
