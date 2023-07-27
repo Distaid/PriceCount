@@ -1,9 +1,6 @@
-name: Test_and_build_artifacts_on_release
+name: Test and build artifacts on release
 
-on:
-    push:
-        branches:
-            - main
+on: [pull_request, push]
 
 jobs:
     build_apk:
