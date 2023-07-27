@@ -7,7 +7,6 @@ on:
 
 jobs:
     build_apk:
-        if: startsWith(github.head_ref, 'release/') == true
         name: Build release artifacts
         runs-on: ubuntu-20.04
         steps:
