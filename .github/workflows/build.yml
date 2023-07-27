@@ -24,7 +24,9 @@ jobs:
 
             -   name: Extract existing version name
                 run: |
-                    version_name=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '\n' | sed 's/\"|\"=\.//')
+                    version_name=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '\n')
+                    version_name=$(echo "$version_name" | sed 's/\"|\"=\.//')
+                    sed -i "s/\"|\"=\.//g" $version_name
                     echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
 
             -   name: Build release APK after test
