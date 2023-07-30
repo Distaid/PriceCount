@@ -6,8 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import aid.distaid.pricecount.ui.theme.PriceCountTheme
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Surface
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainComponent() {
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
 
     Surface {
         NavigationGraph(
