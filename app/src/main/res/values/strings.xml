@@ -3,7 +3,7 @@
     <string name="appName">Подсчет материалов</string>
     <string name="addProduct">Добавить материал</string>
     <string name="productsSum">Сумма</string>
-    <string name="productsCount">Кол-во маьериалов</string>
+    <string name="productsCount">Кол-во материалов</string>
     <string name="productCreate">Новый материал</string>
     <string name="productEdit">Редактирование материала</string>
 </resources>
