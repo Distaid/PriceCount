@@ -1,5 +1,6 @@
 package aid.distaid.pricecount
 
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
@@ -11,3 +12,5 @@ fun Bitmap.toByteArray(): ByteArray = ByteArrayOutputStream().apply {
 }.toByteArray()
 
 fun ByteArray.toBitmap(): Bitmap = BitmapFactory.decodeByteArray(this, 0, this.size)
+
+fun Cursor.getBoolean(columnIndex: Int): Boolean = getInt(columnIndex) > 0

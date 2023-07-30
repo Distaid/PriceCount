@@ -8,11 +8,12 @@ data class Product(
     var sum: Float,
     var price: String,
     var count: String,
+    var isActive: Boolean,
     var link: String?,
     var description: String?,
     var image: Bitmap?
 )
 
 fun createEmptyProduct(): Product {
-    return Product(0, "", 0f, "", "1", null, null, null)
+    return Product(0, "", 0f, "", "1", true, null, null, null)
 }

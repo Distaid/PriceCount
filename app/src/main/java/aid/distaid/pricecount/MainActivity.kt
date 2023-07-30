@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainComponent() {
     val navController = rememberAnimatedNavController()

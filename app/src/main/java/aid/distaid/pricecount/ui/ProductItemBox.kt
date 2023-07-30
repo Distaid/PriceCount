@@ -5,7 +5,6 @@ import aid.distaid.pricecount.data.models.Product
 import aid.distaid.pricecount.format
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,8 +41,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ProductItemBox(
     product: Product,
-    onEdit: (id: Int) -> Unit,
-    onRemove: () -> Unit
+    onEdit: () -> Unit,
+    onRemove: () -> Unit,
+    onChangeActive: () -> Unit
 ) {
     var dropDownMenuExpanded by remember {
         mutableStateOf(false)
@@ -53,8 +53,7 @@ fun ProductItemBox(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, start = 8.dp, end = 8.dp)
-            .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(10))
-            .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10))
     ) {
         Column(
             modifier = Modifier
@@ -114,10 +113,32 @@ fun ProductItemBox(
                             dropDownMenuExpanded = false
                         }
                     ) {
-                        DropdownMenuItem(onClick = { onEdit(product.id) }) {
-                            Text(text = "Редактировать")
+                        if (product.isActive) {
+                            DropdownMenuItem(onClick = {
+                                dropDownMenuExpanded = false
+                                onEdit()
+                            }) {
+                                Text(text = "Редактировать")
+                            }
+                            DropdownMenuItem(onClick = {
+                                dropDownMenuExpanded = false
+                                onChangeActive()
+                            }) {
+                                Text(text = "Завершить")
+                            }
                         }
-                        DropdownMenuItem(onClick = onRemove) {
+                        else {
+                            DropdownMenuItem(onClick = {
+                                dropDownMenuExpanded = false
+                                onChangeActive()
+                            }) {
+                                Text(text = "Активировать")
+                            }
+                        }
+                        DropdownMenuItem(onClick = {
+                            dropDownMenuExpanded = false
+                            onRemove()
+                        }) {
                             Text(text = "Удалить", color = Color.Red)
                         }
                     }
