@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,20 +30,12 @@ fun AidBottomAppBar(
     itemsSum: Float,
     itemsCount: Int
 ) {
-    Box(
-        modifier = Modifier
-            .background(
-                MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(topStartPercent = 10, topEndPercent = 10)
-            )
-    ) {
+    Box {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 0.dp, top = 1.dp, end = 0.dp, bottom = 0.dp)
                 .background(
-                    MaterialTheme.colorScheme.secondary,
-                    shape = RoundedCornerShape(topStartPercent = 10, topEndPercent = 10)
+                    MaterialTheme.colorScheme.surface
                 )
                 .padding(16.dp)
         ) {

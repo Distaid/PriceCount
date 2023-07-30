@@ -54,6 +54,6 @@ fun AidTopAppBar(
                 }
             }
         },
-        backgroundColor = MaterialTheme.colorScheme.secondary
+        backgroundColor = MaterialTheme.colorScheme.surface
     )
 }

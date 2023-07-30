@@ -169,12 +169,11 @@ fun CreateItemScreen(
                 )
                 Spacer(modifier = Modifier.fillMaxWidth().height(8.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
                         modifier = Modifier
-                            .width(130.dp)
+                            .weight(1f)
                             .onFocusChanged { state ->
                                 if (!state.hasFocus && newProduct.count == "") {
                                     newProduct = newProduct.copy(count = "1")
@@ -195,9 +194,10 @@ fun CreateItemScreen(
                             calculateSum()
                         }
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     OutlinedTextField(
                         modifier = Modifier
-                            .width(130.dp)
+                            .weight(1f)
                             .onFocusChanged { state ->
                                 if (!state.hasFocus) {
                                     roundPrice()

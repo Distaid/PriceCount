@@ -33,7 +33,7 @@ fun AidBackTopAppBar(
                 )
             }
         },
-        backgroundColor = MaterialTheme.colorScheme.secondary
+        backgroundColor = MaterialTheme.colorScheme.surface
     )
 }
 
@@ -58,6 +58,6 @@ fun AidBackTopAppBar(
                 )
             }
         },
-        backgroundColor = MaterialTheme.colorScheme.secondary
+        backgroundColor = MaterialTheme.colorScheme.surface
     )
 }
