@@ -4,9 +4,7 @@ import aid.distaid.pricecount.R
 import aid.distaid.pricecount.data.models.Product
 import aid.distaid.pricecount.format
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,11 +48,11 @@ fun ProductItemBox(
         mutableStateOf(false)
     }
 
-    Box(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, start = 8.dp, end = 8.dp)
-            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10))
+            .padding(top = 16.dp, start = 8.dp, end = 8.dp),
+        shape = RoundedCornerShape(10.dp)
     ) {
         Column(
             modifier = Modifier
@@ -89,7 +88,7 @@ fun ProductItemBox(
                             textDecoration = TextDecoration.Underline
                         )
                     } else {
-                        Text(text = "Нет ссылки")
+                        Text(text = stringResource(id = R.string.noLink))
                     }
                     if (product.description != null && product.description != "") {
                         Text(
@@ -114,33 +113,37 @@ fun ProductItemBox(
                         }
                     ) {
                         if (product.isActive) {
-                            DropdownMenuItem(onClick = {
-                                dropDownMenuExpanded = false
-                                onEdit()
-                            }) {
-                                Text(text = "Редактировать")
-                            }
-                            DropdownMenuItem(onClick = {
-                                dropDownMenuExpanded = false
-                                onChangeActive()
-                            }) {
-                                Text(text = "Завершить")
-                            }
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(id = R.string.edit)) },
+                                onClick = {
+                                    dropDownMenuExpanded = false
+                                    onEdit()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(id = R.string.finish)) },
+                                onClick = {
+                                    dropDownMenuExpanded = false
+                                    onChangeActive()
+                                }
+                            )
                         }
                         else {
-                            DropdownMenuItem(onClick = {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(id = R.string.activate)) },
+                                onClick = {
+                                    dropDownMenuExpanded = false
+                                    onChangeActive()
+                                }
+                            )
+                        }
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(id = R.string.remove), color = Color.Red) },
+                            onClick = {
                                 dropDownMenuExpanded = false
-                                onChangeActive()
-                            }) {
-                                Text(text = "Активировать")
+                                onRemove()
                             }
-                        }
-                        DropdownMenuItem(onClick = {
-                            dropDownMenuExpanded = false
-                            onRemove()
-                        }) {
-                            Text(text = "Удалить", color = Color.Red)
-                        }
+                        )
                     }
                 }
             }
@@ -151,11 +154,11 @@ fun ProductItemBox(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "КОЛ-ВО: ${product.count} (1 x ${product.price})",
+                    text = stringResource(id = R.string.productItemCount, product.count, product.price).uppercase(),
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "СТОИМОСТЬ: ${product.sum.format(2)}",
+                    text = stringResource(id = R.string.productItemPrice, product.sum.format(2)).uppercase(),
                     fontWeight = FontWeight.Bold
                 )
             }

@@ -1,7 +1,6 @@
 package aid.distaid.pricecount.ui.screens
 
 import aid.distaid.pricecount.data.sql.AidDbHandler
-import aid.distaid.pricecount.navigation.NavigationItem
 import aid.distaid.pricecount.ui.AidBottomAppBar
 import aid.distaid.pricecount.ui.AidTopAppBar
 import aid.distaid.pricecount.ui.ProductItemBox
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -24,16 +24,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 
 @Composable
-fun ActiveProducts(
-    navController: NavHostController,
+private fun ActiveProducts(
     dbHandler: AidDbHandler,
+    onEditProduct: (Int) -> Unit,
     productsChanged: (sum: Float, count: Int) -> Unit
 ) {
     val products = remember {
@@ -52,14 +51,7 @@ fun ActiveProducts(
         ) { item ->
             ProductItemBox(
                 item,
-                onEdit = {
-                    navController.navigate(NavigationItem.EditProduct.route.replace("{id}", item.id.toString())) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        restoreState = true
-                    }
-                },
+                onEdit = { onEditProduct(item.id) },
                 onRemove = {
                     dbHandler.productsHandler.delete(item)
                     products.clear()
@@ -76,7 +68,7 @@ fun ActiveProducts(
 }
 
 @Composable
-fun FinishedProducts(
+private fun FinishedProducts(
     dbHandler: AidDbHandler
 ) {
     val finishedProducts = remember {
@@ -108,7 +100,8 @@ fun FinishedProducts(
 
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+    onAddProduct: () -> Unit,
+    onEditProduct: (Int) -> Unit
 ) {
     val tabs = listOf("Активные", "Завершенные")
     val dbHandler = AidDbHandler(LocalContext.current)
@@ -124,14 +117,7 @@ fun HomeScreen(
         bottomBar = {
             if (tabState == 0) {
                 AidBottomAppBar(
-                    onAddButtonClick = {
-                        navController.navigate(NavigationItem.CreateProduct.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            restoreState = true
-                        }
-                    },
+                    onAddButtonClick = onAddProduct,
                     itemsSum = productsSum,
                     itemsCount = productsCount
                 )
@@ -149,7 +135,8 @@ fun HomeScreen(
                             TabRowDefaults.Indicator(
                                 modifier = Modifier
                                     .tabIndicatorOffset(tabPositions[tabState])
-                                    .padding(horizontal = 40.dp),
+                                    .padding(horizontal = 40.dp)
+                                    .clip(CircleShape),
                             )
                         }
                     }
@@ -164,10 +151,14 @@ fun HomeScreen(
                     }
                 }
                 when(tabState) {
-                    0 -> ActiveProducts(navController, dbHandler) { sum, count ->
-                        productsSum = sum
-                        productsCount = count
-                    }
+                    0 -> ActiveProducts(
+                        dbHandler = dbHandler,
+                        onEditProduct = onEditProduct,
+                        productsChanged = { sum, count ->
+                            productsSum = sum
+                            productsCount = count
+                        }
+                    )
                     1 -> FinishedProducts(dbHandler)
                 }
             }

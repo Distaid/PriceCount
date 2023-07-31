@@ -1,60 +1,67 @@
 package aid.distaid.pricecount.navigation
 
+import aid.distaid.pricecount.composableNoAnimation
 import aid.distaid.pricecount.ui.screens.CreateItemScreen
 import aid.distaid.pricecount.ui.screens.EditProductScreen
 import aid.distaid.pricecount.ui.screens.HomeScreen
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationGraph(
-    navHostController: NavHostController
+    navHostController: NavHostController = rememberAnimatedNavController()
 ) {
     AnimatedNavHost(
         navController = navHostController,
         startDestination = NavigationItem.Home.route,
     ) {
-        composable(
-            NavigationItem.Home.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None }
+        composableNoAnimation(
+            NavigationItem.Home.route
         ) {
             HomeScreen(
-                navHostController
+                onAddProduct = {
+                    navHostController.navigate(NavigationItem.CreateProduct.route) {
+                        popUpTo(navHostController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                },
+                onEditProduct = {
+                    navHostController.navigate("${NavigationItem.EditProduct.path}${it}") {
+                        popUpTo(navHostController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                }
             )
         }
-        composable(
-            NavigationItem.CreateProduct.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None }
+        composableNoAnimation(
+            NavigationItem.CreateProduct.route
         ) {
             CreateItemScreen(
-                navHostController
+                onBack = {
+                    navHostController.popBackStack()
+                }
             )
         }
-        composable(
+        composableNoAnimation(
             NavigationItem.EditProduct.route,
             arguments = listOf(navArgument("id") { type = NavType.IntType }),
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None }
         ) { backStackEntry ->
             EditProductScreen(
-                navHostController,
-                backStackEntry.arguments!!.getInt("id")
+                backStackEntry.arguments!!.getInt("id"),
+                onBack = {
+                    navHostController.popBackStack()
+                }
             )
         }
     }

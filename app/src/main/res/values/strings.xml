@@ -1,9 +1,27 @@
 <resources>
     <string name="app_name">PriceCount</string>
     <string name="appName">Подсчет материалов</string>
+    <string name="cancel">Отмена</string>
+    <string name="add">Добавить</string>
+    <string name="save">Сохранить</string>
+    <string name="edit">Редактировать</string>
+    <string name="noLink">Нет ссылки</string>
+    <string name="finish">Завершить</string>
+    <string name="activate">Активировать</string>
+    <string name="remove">Удалить</string>
+    <string name="productItemCount">Кол-во: %1$s (1 x %2$s)</string>
+    <string name="productItemPrice">Стоимость: %1$s</string>
     <string name="addProduct">Добавить материал</string>
     <string name="productsSum">Сумма</string>
     <string name="productsCount">Кол-во материалов</string>
     <string name="productCreate">Новый материал</string>
     <string name="productEdit">Редактирование материала</string>
+    <string name="categories">Категории</string>
+    <string name="choosePhoto">Выбрать фото</string>
+    <string name="productName">Название предмета</string>
+    <string name="productLink">Ссылка на предмет</string>
+    <string name="productCount">Количество</string>
+    <string name="productPrice">Цена</string>
+    <string name="productSum">Сумма: %1$s</string>
+    <string name="productDescription">Примечания</string>
 </resources>

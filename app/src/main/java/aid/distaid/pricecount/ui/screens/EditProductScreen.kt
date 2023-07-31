@@ -47,17 +47,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditProductScreen(
-    navController: NavHostController,
-    productId: Int
+    productId: Int,
+    onBack: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -94,12 +94,15 @@ fun EditProductScreen(
 
     fun saveItem() {
         dbHandler.productsHandler.update(editableProduct)
-        navController.popBackStack()
+        onBack()
     }
 
     Scaffold(
         topBar = {
-            AidBackTopAppBar(titleFromResource = R.string.productEdit) { navController.popBackStack() }
+            AidBackTopAppBar(
+                titleFromResource = R.string.productEdit,
+                onBack = onBack
+            )
         }
     ) {
         Box(modifier = Modifier
@@ -127,20 +130,16 @@ fun EditProductScreen(
                     OutlinedButton(onClick = {
                         launcher.launch("image/*")
                     }) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.image_24),
-                                    contentDescription = "add"
-                                )
-                                Spacer(modifier = Modifier.width(8.dp)
-                                )
-                                Text(
-                                    text = "ВЫБРАТЬ ФОТО",
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
+                        Icon(
+                            painter = painterResource(id = R.drawable.image_24),
+                            contentDescription = "add",
+                            modifier = Modifier.size(ButtonDefaults.IconSize)
+                        )
+                        Spacer(modifier = Modifier.size(ButtonDefaults.IconSize))
+                        Text(
+                            text = stringResource(id = R.string.choosePhoto).uppercase(),
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                     editableProduct.image?.let { image ->
                         Image(
@@ -156,7 +155,7 @@ fun EditProductScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = editableProduct.name,
                     singleLine = true,
-                    label = { Text(text = "Название предмета") },
+                    label = { Text(text = stringResource(id = R.string.productName)) },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     onValueChange = { value -> editableProduct = editableProduct.copy(name = value) }
                 )
@@ -166,7 +165,7 @@ fun EditProductScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                     value = editableProduct.link ?: "",
                     singleLine = true,
-                    label = { Text(text = "Ссылка на предмет") },
+                    label = { Text(text = stringResource(id = R.string.productLink)) },
                     onValueChange = { value -> editableProduct = editableProduct.copy(link = value) }
                 )
                 Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
@@ -186,7 +185,7 @@ fun EditProductScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         value = editableProduct.count,
                         singleLine = true,
-                        label = { Text(text = "Количество") },
+                        label = { Text(text = stringResource(id = R.string.productCount)) },
                         onValueChange = { value ->
                             if (value.contains(" ") || value.contains(",") || value.contains(".") || value.contains("-"))
                                 return@OutlinedTextField
@@ -210,7 +209,7 @@ fun EditProductScreen(
                         keyboardActions = KeyboardActions(onAny = { roundPrice() }),
                         value = editableProduct.price,
                         singleLine = true,
-                        label = { Text(text = "Цена") },
+                        label = { Text(text = stringResource(id = R.string.productPrice)) },
                         onValueChange = { value ->
                             if (value.contains(" ") || value.contains("-"))
                                 return@OutlinedTextField
@@ -231,13 +230,13 @@ fun EditProductScreen(
                 }
                 Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 Text(
-                    text = "СУММА: ${editableProduct.sum.format(2)}",
+                    text = stringResource(id = R.string.productSum, editableProduct.sum.format(2)).uppercase(),
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text(text = "Примечания") },
+                    label = { Text(text = stringResource(id = R.string.productDescription)) },
                     value = editableProduct.description ?: "",
                     minLines = 3,
                     maxLines = 10,
@@ -247,17 +246,15 @@ fun EditProductScreen(
                 Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     OutlinedButton(
-                        onClick = { saveItem() },
-                        modifier = Modifier.width(130.dp)
+                        onClick = { saveItem() }
                     ) {
-                        Text(text = "СОХРАНИТЬ")
+                        Text(text = stringResource(id = R.string.save).uppercase())
                     }
                     OutlinedButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.width(130.dp),
+                        onClick = onBack,
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
                     ) {
-                        Text(text = "ОТМЕНА")
+                        Text(text = stringResource(id = R.string.cancel).uppercase())
                     }
                 }
             }
