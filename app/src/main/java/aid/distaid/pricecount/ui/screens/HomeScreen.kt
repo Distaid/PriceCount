@@ -101,7 +101,8 @@ private fun FinishedProducts(
 @Composable
 fun HomeScreen(
     onAddProduct: () -> Unit,
-    onEditProduct: (Int) -> Unit
+    onEditProduct: (Int) -> Unit,
+    onOpenCategories: () -> Unit
 ) {
     val tabs = listOf("Активные", "Завершенные")
     val dbHandler = AidDbHandler(LocalContext.current)
@@ -113,7 +114,7 @@ fun HomeScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AidTopAppBar {} },
+        topBar = { AidTopAppBar(onOpenCategories = onOpenCategories) },
         bottomBar = {
             if (tabState == 0) {
                 AidBottomAppBar(

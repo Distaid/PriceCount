@@ -1,6 +1,7 @@
 package aid.distaid.pricecount.navigation
 
 import aid.distaid.pricecount.composableNoAnimation
+import aid.distaid.pricecount.ui.screens.CategoriesScreen
 import aid.distaid.pricecount.ui.screens.CreateItemScreen
 import aid.distaid.pricecount.ui.screens.EditProductScreen
 import aid.distaid.pricecount.ui.screens.HomeScreen
@@ -23,7 +24,7 @@ fun NavigationGraph(
         startDestination = NavigationItem.Home.route,
     ) {
         composableNoAnimation(
-            NavigationItem.Home.route
+            route = NavigationItem.Home.route
         ) {
             HomeScreen(
                 onAddProduct = {
@@ -41,11 +42,19 @@ fun NavigationGraph(
                         }
                         restoreState = true
                     }
+                },
+                onOpenCategories = {
+                    navHostController.navigate(NavigationItem.Categories.route) {
+                        popUpTo(navHostController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
                 }
             )
         }
         composableNoAnimation(
-            NavigationItem.CreateProduct.route
+            route = NavigationItem.CreateProduct.route
         ) {
             CreateItemScreen(
                 onBack = {
@@ -54,11 +63,20 @@ fun NavigationGraph(
             )
         }
         composableNoAnimation(
-            NavigationItem.EditProduct.route,
+            route = NavigationItem.EditProduct.route,
             arguments = listOf(navArgument("id") { type = NavType.IntType }),
         ) { backStackEntry ->
             EditProductScreen(
                 backStackEntry.arguments!!.getInt("id"),
+                onBack = {
+                    navHostController.popBackStack()
+                }
+            )
+        }
+        composableNoAnimation(
+            route = NavigationItem.Categories.route
+        ) {
+            CategoriesScreen(
                 onBack = {
                     navHostController.popBackStack()
                 }
