@@ -71,9 +71,7 @@ fun SelectDialog(
                             key = { item -> item.id }
                         ) {
                             Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(10.dp),
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                                 onClick = {
