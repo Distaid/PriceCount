@@ -4,10 +4,12 @@ import aid.distaid.pricecount.R
 import aid.distaid.pricecount.data.sql.AidDbHandler
 import aid.distaid.pricecount.format
 import aid.distaid.pricecount.ui.AidBackTopAppBar
+import aid.distaid.pricecount.ui.SelectDialog
 import android.graphics.ImageDecoder
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,8 +28,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,6 +72,10 @@ fun EditProductScreen(
 
     var editableProduct by remember {
         mutableStateOf(dbHandler.productsHandler.getById(productId)!!)
+    }
+
+    var dialogOpen by remember {
+        mutableStateOf(false)
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
@@ -161,6 +170,39 @@ fun EditProductScreen(
                 )
                 Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { dialogOpen = true },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    value = editableProduct.category?.name ?: "",
+                    singleLine = true,
+                    label = { Text(text = stringResource(id = R.string.productCategory)) },
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                    onValueChange = {  },
+                    enabled = false,
+                    trailingIcon = {
+                        if (editableProduct.category != null) {
+                            IconButton(onClick = {
+                                editableProduct = editableProduct.copy(
+                                    category = null,
+                                    categoryId = null
+                                )
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.clear_24),
+                                    contentDescription = "clear"
+                                )
+                            }
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+                OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                     value = editableProduct.link ?: "",
@@ -175,7 +217,7 @@ fun EditProductScreen(
                 ) {
                     OutlinedTextField(
                         modifier = Modifier
-                            .width(130.dp)
+                            .weight(1f)
                             .onFocusChanged { state ->
                                 if (!state.hasFocus && editableProduct.count == "") {
                                     editableProduct = editableProduct.copy(count = "1")
@@ -196,9 +238,10 @@ fun EditProductScreen(
                             calculateSum()
                         }
                     )
+                    Spacer(modifier = Modifier.width(16.dp))
                     OutlinedTextField(
                         modifier = Modifier
-                            .width(130.dp)
+                            .weight(1f)
                             .onFocusChanged { state ->
                                 if (!state.hasFocus) {
                                     roundPrice()
@@ -257,6 +300,18 @@ fun EditProductScreen(
                         Text(text = stringResource(id = R.string.cancel).uppercase())
                     }
                 }
+                SelectDialog(
+                    open = dialogOpen,
+                    dialogLabel = "Выберите категорию",
+                    items = dbHandler.categoriesHandler.getAll(),
+                    onConfirm = { category ->
+                        editableProduct = editableProduct.copy(
+                            category = category,
+                            categoryId = category.id
+                        )
+                    },
+                    onClose = { dialogOpen = false }
+                )
             }
         }
     }

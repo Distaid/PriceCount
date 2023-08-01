@@ -17,11 +17,15 @@
     <string name="productCreate">Новый материал</string>
     <string name="productEdit">Редактирование материала</string>
     <string name="categories">Категории</string>
+    <string name="category">Категория</string>
+    <string name="categoryAdd">Добавление категории</string>
+    <string name="categoryEdit">Редактирование категории</string>
     <string name="choosePhoto">Выбрать фото</string>
     <string name="productName">Название предмета</string>
     <string name="productLink">Ссылка на предмет</string>
     <string name="productCount">Количество</string>
     <string name="productPrice">Цена</string>
+    <string name="productCategory">Категория предмета</string>
     <string name="productSum">Сумма: %1$s</string>
     <string name="productDescription">Примечания</string>
 </resources>

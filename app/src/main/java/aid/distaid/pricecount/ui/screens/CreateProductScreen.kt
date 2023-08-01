@@ -5,10 +5,12 @@ import aid.distaid.pricecount.data.models.createEmptyProduct
 import aid.distaid.pricecount.data.sql.AidDbHandler
 import aid.distaid.pricecount.format
 import aid.distaid.pricecount.ui.AidBackTopAppBar
+import aid.distaid.pricecount.ui.SelectDialog
 import android.graphics.ImageDecoder
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,8 +29,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,6 +72,10 @@ fun CreateItemScreen(
 
     var newProduct by remember {
         mutableStateOf(createEmptyProduct())
+    }
+
+    var dialogOpen by remember {
+        mutableStateOf(false)
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
@@ -148,9 +157,7 @@ fun CreateItemScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = newProduct.name,
@@ -159,9 +166,40 @@ fun CreateItemScreen(
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     onValueChange = { value -> newProduct = newProduct.copy(name = value) }
                 )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { dialogOpen = true },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    value = newProduct.category?.name ?: "",
+                    singleLine = true,
+                    label = { Text(text = stringResource(id = R.string.productCategory)) },
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                    onValueChange = {  },
+                    enabled = false,
+                    trailingIcon = {
+                        if (newProduct.category != null) {
+                            IconButton(onClick = {
+                                newProduct = newProduct.copy(
+                                    category = null,
+                                    categoryId = null
+                                )
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.clear_24),
+                                    contentDescription = "clear"
+                                )
+                            }
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
@@ -170,9 +208,7 @@ fun CreateItemScreen(
                     label = { Text(text = stringResource(id = R.string.productLink)) },
                     onValueChange = { value -> newProduct = newProduct.copy(link = value) }
                 )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -199,7 +235,7 @@ fun CreateItemScreen(
                             calculateSum()
                         }
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
                     OutlinedTextField(
                         modifier = Modifier
                             .weight(1f)
@@ -232,16 +268,12 @@ fun CreateItemScreen(
                         }
                     )
                 }
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 Text(
                     text = stringResource(id = R.string.productSum, newProduct.sum.format(2)).uppercase(),
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(text = stringResource(id = R.string.productDescription)) },
@@ -251,9 +283,7 @@ fun CreateItemScreen(
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     onValueChange = { value -> newProduct = newProduct.copy(description = value)}
                 )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     OutlinedButton(
                         onClick = { saveItem() }
@@ -267,6 +297,18 @@ fun CreateItemScreen(
                         Text(text = stringResource(id = R.string.cancel).uppercase())
                     }
                 }
+                SelectDialog(
+                    open = dialogOpen,
+                    dialogLabel = "Выберите категорию",
+                    items = dbHandler.categoriesHandler.getAll(),
+                    onConfirm = { category ->
+                        newProduct = newProduct.copy(
+                            category = category,
+                            categoryId = category.id
+                        )
+                    },
+                    onClose = { dialogOpen = false }
+                )
             }
         }
     }
