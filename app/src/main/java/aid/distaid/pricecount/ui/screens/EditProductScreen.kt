@@ -36,6 +36,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,6 +77,12 @@ fun EditProductScreen(
 
     var dialogOpen by remember {
         mutableStateOf(false)
+    }
+
+    val scrollState = rememberScrollState(0)
+
+    LaunchedEffect(scrollState.maxValue) {
+        scrollState.animateScrollTo(scrollState.maxValue)
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
@@ -128,7 +135,7 @@ fun EditProductScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start
             ) {
                 Row(
