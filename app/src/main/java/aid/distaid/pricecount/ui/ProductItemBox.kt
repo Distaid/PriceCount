@@ -83,6 +83,14 @@ fun ProductItemBox(
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold
                     )
+                    product.category?.let { category ->
+                        Text(
+                            text = category.name,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                     if (product.link != null) {
                         Text(
                             text = product.link!!,
