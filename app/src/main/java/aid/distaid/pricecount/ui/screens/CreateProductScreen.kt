@@ -314,7 +314,15 @@ fun CreateItemScreen(
                             categoryId = category.id
                         )
                     },
-                    onClose = { dialogOpen = false }
+                    onClose = { dialogOpen = false },
+                    onSelectedItem = { category ->
+                        if (newProduct.category == null) {
+                            false
+                        }
+                        else {
+                            newProduct.category!!.id == category.id
+                        }
+                    }
                 )
             }
         }

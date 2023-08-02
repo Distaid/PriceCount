@@ -317,7 +317,15 @@ fun EditProductScreen(
                             categoryId = category.id
                         )
                     },
-                    onClose = { dialogOpen = false }
+                    onClose = { dialogOpen = false },
+                    onSelectedItem = { category ->
+                        if (editableProduct.category == null) {
+                            false
+                        }
+                        else {
+                            editableProduct.category!!.id == category.id
+                        }
+                    }
                 )
             }
         }

@@ -54,8 +54,11 @@ class ProductsHandler(private val dbHandler: AidDbHandler) {
     }
 
     @SuppressLint("Range")
-    fun getAll(isActive: Boolean = true): SnapshotStateList<Product> {
-        val cursor = dbHandler.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME WHERE isActive=${if (isActive) 1 else 0}", null)
+    fun getAll(category: Category?, isActive: Boolean = true): SnapshotStateList<Product> {
+        val query = if (category == null) "SELECT * FROM $TABLE_NAME WHERE isActive=${if (isActive) 1 else 0}"
+        else "SELECT * FROM $TABLE_NAME WHERE isActive=${if (isActive) 1 else 0} AND categoryId=${category.id}"
+
+        val cursor = dbHandler.readableDatabase.rawQuery(query, null)
         val products = mutableStateListOf<Product>()
 
         if (cursor.moveToFirst()) {
