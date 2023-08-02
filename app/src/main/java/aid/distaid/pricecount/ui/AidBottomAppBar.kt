@@ -50,11 +50,11 @@ fun AidBottomAppBar(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${stringResource(id = R.string.productsSum).uppercase()}: ${itemsSum.format(2)}",
+                    text = stringResource(id = R.string.productsSum, itemsSum.format(2)).uppercase(),
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${stringResource(id = R.string.productsCount).uppercase()}: $itemsCount",
+                    text = stringResource(id = R.string.productsCount, itemsCount.toString()).uppercase(),
                     fontWeight = FontWeight.Bold
                 )
             }

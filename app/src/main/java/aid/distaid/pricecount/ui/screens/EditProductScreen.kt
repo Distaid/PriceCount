@@ -309,7 +309,7 @@ fun EditProductScreen(
                 }
                 SelectDialog(
                     open = dialogOpen,
-                    dialogLabel = "Выберите категорию",
+                    dialogLabel = stringResource(id = R.string.chooseCategory),
                     items = dbHandler.categoriesHandler.getAll(),
                     onConfirm = { category ->
                         editableProduct = editableProduct.copy(

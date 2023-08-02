@@ -104,7 +104,11 @@ fun HomeScreen(
     onEditProduct: (Int) -> Unit,
     onOpenCategories: () -> Unit
 ) {
-    val tabs = listOf("Активные", "Завершенные")
+    val tabs = listOf(
+        stringResource(id = R.string.activeTab),
+        stringResource(id = R.string.finishedTab)
+    )
+
     val dbHandler = AidDbHandler(LocalContext.current)
 
     var tabState by remember { mutableStateOf(0) }

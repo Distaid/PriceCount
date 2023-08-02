@@ -12,8 +12,8 @@
     <string name="productItemCount">Кол-во: %1$s (1 x %2$s)</string>
     <string name="productItemPrice">Стоимость: %1$s</string>
     <string name="addProduct">Добавить материал</string>
-    <string name="productsSum">Сумма</string>
-    <string name="productsCount">Кол-во материалов</string>
+    <string name="productsSum">Сумма: %1$s</string>
+    <string name="productsCount">Кол-во материалов: %1$s</string>
     <string name="productCreate">Новый материал</string>
     <string name="productEdit">Редактирование материала</string>
     <string name="categories">Категории</string>
@@ -28,4 +28,7 @@
     <string name="productCategory">Категория предмета</string>
     <string name="productSum">Сумма: %1$s</string>
     <string name="productDescription">Примечания</string>
+    <string name="activeTab">Активные</string>
+    <string name="finishedTab">Завершенные</string>
+    <string name="chooseCategory">Выберите категорию</string>
 </resources>
