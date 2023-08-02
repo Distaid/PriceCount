@@ -1,5 +1,6 @@
 package aid.distaid.pricecount.data.sql
 
+import aid.distaid.pricecount.data.models.Category
 import aid.distaid.pricecount.data.models.Product
 import aid.distaid.pricecount.getBoolean
 import aid.distaid.pricecount.toBitmap
