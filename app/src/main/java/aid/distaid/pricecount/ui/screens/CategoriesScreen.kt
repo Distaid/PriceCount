@@ -26,12 +26,15 @@ fun CategoriesScreen(
 ) {
     val dbHandler = AidDbHandler(LocalContext.current)
 
-    val categories = remember {
-        dbHandler.categoriesHandler.getAll()
-    }
+    val categories = dbHandler.categoriesHandler.getAll()
 
     var dialogOpen by remember {
         mutableStateOf(false)
+    }
+
+    fun updateCategories() {
+        categories.clear()
+        categories.addAll(dbHandler.categoriesHandler.getAll())
     }
 
     Scaffold(
@@ -58,14 +61,12 @@ fun CategoriesScreen(
                     category = it,
                     onEdit = { value ->
                         dbHandler.categoriesHandler.update(it.copy(name = value))
-                        categories.clear()
-                        categories.addAll(dbHandler.categoriesHandler.getAll())
+                        updateCategories()
                     },
                     onRemove = {
                         if (!dbHandler.productsHandler.containsCategory(it.id)) {
                             dbHandler.categoriesHandler.delete(it)
-                            categories.clear()
-                            categories.addAll(dbHandler.categoriesHandler.getAll())
+                            updateCategories()
                         }
                     }
                 )

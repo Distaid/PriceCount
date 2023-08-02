@@ -1,5 +1,7 @@
 package aid.distaid.pricecount.ui.screens
 
+import aid.distaid.pricecount.R
+import aid.distaid.pricecount.data.models.Category
 import aid.distaid.pricecount.data.sql.AidDbHandler
 import aid.distaid.pricecount.ui.AidBottomAppBar
 import aid.distaid.pricecount.ui.AidTopAppBar
@@ -26,17 +28,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
 private fun ActiveProducts(
     dbHandler: AidDbHandler,
+    categoryForSelect: Category?,
     onEditProduct: (Int) -> Unit,
     productsChanged: (sum: Float, count: Int) -> Unit
 ) {
-    val products = remember {
-        dbHandler.productsHandler.getAll()
+    val products = dbHandler.productsHandler.getAll(category = categoryForSelect)
+
+    fun updateProducts() {
+        products.clear()
+        products.addAll(dbHandler.productsHandler.getAll(category = categoryForSelect))
     }
 
     fun getTotalSum(): Float {
@@ -54,13 +61,11 @@ private fun ActiveProducts(
                 onEdit = { onEditProduct(item.id) },
                 onRemove = {
                     dbHandler.productsHandler.delete(item)
-                    products.clear()
-                    products.addAll(dbHandler.productsHandler.getAll())
+                    updateProducts()
                 },
                 onChangeActive = {
                     dbHandler.productsHandler.changeActive(item)
-                    products.clear()
-                    products.addAll(dbHandler.productsHandler.getAll())
+                    updateProducts()
                 }
             )
         }
@@ -69,10 +74,14 @@ private fun ActiveProducts(
 
 @Composable
 private fun FinishedProducts(
-    dbHandler: AidDbHandler
+    dbHandler: AidDbHandler,
+    categoryForSelect: Category?,
 ) {
-    val finishedProducts = remember {
-        dbHandler.productsHandler.getAll(isActive = false)
+    val finishedProducts = dbHandler.productsHandler.getAll(category = categoryForSelect, isActive = false)
+
+    fun updateProducts() {
+        finishedProducts.clear()
+        finishedProducts.addAll(dbHandler.productsHandler.getAll(category = categoryForSelect, isActive = false))
     }
 
     LazyColumn {
@@ -85,13 +94,11 @@ private fun FinishedProducts(
                 onEdit = { },
                 onRemove = {
                     dbHandler.productsHandler.delete(item)
-                    finishedProducts.clear()
-                    finishedProducts.addAll(dbHandler.productsHandler.getAll(isActive = false))
+                    updateProducts()
                 },
                 onChangeActive = {
                     dbHandler.productsHandler.changeActive(item)
-                    finishedProducts.clear()
-                    finishedProducts.addAll(dbHandler.productsHandler.getAll(isActive = false))
+                    updateProducts()
                 }
             )
         }
@@ -112,13 +119,33 @@ fun HomeScreen(
     val dbHandler = AidDbHandler(LocalContext.current)
 
     var tabState by remember { mutableStateOf(0) }
+    var categoryState by remember { mutableStateOf<Category?>(null) }
 
     var productsSum by remember { mutableStateOf(0f) }
     var productsCount by remember { mutableStateOf(0) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AidTopAppBar(onOpenCategories = onOpenCategories) },
+        topBar = {
+            AidTopAppBar(
+                dbHandler = dbHandler,
+                onOpenCategories = onOpenCategories,
+                onSelectByCategory = { category ->
+                    categoryState = if (category.id == 0) null else category
+                },
+                onSelectedCategoryItem = { category ->
+                    if (categoryState == null && category.id == 0) {
+                        true
+                    }
+                    else if (categoryState != null) {
+                        categoryState!!.id == category.id
+                    }
+                    else {
+                        false
+                    }
+                }
+            )
+        },
         bottomBar = {
             if (tabState == 0) {
                 AidBottomAppBar(
@@ -141,7 +168,7 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .tabIndicatorOffset(tabPositions[tabState])
                                     .padding(horizontal = 40.dp)
-                                    .clip(CircleShape),
+                                    .clip(CircleShape)
                             )
                         }
                     }
@@ -158,13 +185,17 @@ fun HomeScreen(
                 when(tabState) {
                     0 -> ActiveProducts(
                         dbHandler = dbHandler,
+                        categoryForSelect = categoryState,
                         onEditProduct = onEditProduct,
                         productsChanged = { sum, count ->
                             productsSum = sum
                             productsCount = count
                         }
                     )
-                    1 -> FinishedProducts(dbHandler)
+                    1 -> FinishedProducts(
+                        dbHandler = dbHandler,
+                        categoryForSelect = categoryState
+                    )
                 }
             }
         }
