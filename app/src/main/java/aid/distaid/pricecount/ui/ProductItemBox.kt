@@ -18,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductItemBox(
     product: Product,
@@ -50,12 +52,17 @@ fun ProductItemBox(
         mutableStateOf(false)
     }
 
+    var cardExpanded by remember {
+        mutableStateOf(false)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, start = 8.dp, end = 8.dp),
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        onClick = { cardExpanded = !cardExpanded }
     ) {
         Column(
             modifier = Modifier
@@ -104,7 +111,7 @@ fun ProductItemBox(
                     if (product.description != null && product.description != "") {
                         Text(
                             text = product.description!!,
-                            maxLines = 3,
+                            maxLines = if (cardExpanded) Int.MAX_VALUE else 3,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
