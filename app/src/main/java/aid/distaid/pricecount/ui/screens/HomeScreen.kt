@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 private fun ActiveProducts(
     dbHandler: AidDbHandler,
     categoryForSelect: Category?,
-    onEditProduct: (Int) -> Unit,
-    productsChanged: (sum: Float, count: Int) -> Unit
+    onAddProduct: () -> Unit,
+    onEditProduct: (Int) -> Unit
 ) {
     val products = dbHandler.productsHandler.getAll(category = categoryForSelect)
 
@@ -49,25 +49,37 @@ private fun ActiveProducts(
     fun getTotalSum(): Float {
         return products.fold(0f) { acc, item -> acc + item.sum }
     }
-    productsChanged(getTotalSum(), products.size)
 
-    LazyColumn {
-        items(
-            items = products,
-            key = { item -> item.id }
-        ) { item ->
-            ProductItemBox(
-                item,
-                onEdit = { onEditProduct(item.id) },
-                onRemove = {
-                    dbHandler.productsHandler.delete(item)
-                    updateProducts()
-                },
-                onChangeActive = {
-                    dbHandler.productsHandler.changeActive(item)
-                    updateProducts()
-                }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            AidBottomAppBar(
+                onAddButtonClick = onAddProduct,
+                itemsSum = getTotalSum(),
+                itemsCount = products.size
             )
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues).padding(bottom = 8.dp)
+        ) {
+            items(
+                items = products,
+                key = { item -> item.id }
+            ) { item ->
+                ProductItemBox(
+                    item,
+                    onEdit = { onEditProduct(item.id) },
+                    onRemove = {
+                        dbHandler.productsHandler.delete(item)
+                        updateProducts()
+                    },
+                    onChangeActive = {
+                        dbHandler.productsHandler.changeActive(item)
+                        updateProducts()
+                    }
+                )
+            }
         }
     }
 }
@@ -121,9 +133,6 @@ fun HomeScreen(
     var tabState by remember { mutableStateOf(0) }
     var categoryState by remember { mutableStateOf<Category?>(null) }
 
-    var productsSum by remember { mutableStateOf(0f) }
-    var productsCount by remember { mutableStateOf(0) }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -145,21 +154,10 @@ fun HomeScreen(
                     }
                 }
             )
-        },
-        bottomBar = {
-            if (tabState == 0) {
-                AidBottomAppBar(
-                    onAddButtonClick = onAddProduct,
-                    itemsSum = productsSum,
-                    itemsCount = productsCount
-                )
-            }
         }
-    ) {
-        Box(modifier = Modifier.padding(it)) {
-            Column(
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            Column {
                 TabRow(
                     selectedTabIndex = tabState,
                     indicator = { tabPositions ->
@@ -186,11 +184,8 @@ fun HomeScreen(
                     0 -> ActiveProducts(
                         dbHandler = dbHandler,
                         categoryForSelect = categoryState,
-                        onEditProduct = onEditProduct,
-                        productsChanged = { sum, count ->
-                            productsSum = sum
-                            productsCount = count
-                        }
+                        onAddProduct = onAddProduct,
+                        onEditProduct = onEditProduct
                     )
                     1 -> FinishedProducts(
                         dbHandler = dbHandler,
