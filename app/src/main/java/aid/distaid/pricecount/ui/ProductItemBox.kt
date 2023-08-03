@@ -138,23 +138,14 @@ fun ProductItemBox(
                                     onEdit()
                                 }
                             )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.finish)) },
-                                onClick = {
-                                    dropDownMenuExpanded = false
-                                    onChangeActive()
-                                }
-                            )
                         }
-                        else {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.activate)) },
-                                onClick = {
-                                    dropDownMenuExpanded = false
-                                    onChangeActive()
-                                }
-                            )
-                        }
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(id = if (product.isActive) R.string.finish else R.string.activate)) },
+                            onClick = {
+                                dropDownMenuExpanded = false
+                                onChangeActive()
+                            }
+                        )
                         DropdownMenuItem(
                             text = { Text(text = stringResource(id = R.string.remove), color = Color.Red) },
                             onClick = {
