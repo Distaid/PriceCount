@@ -12,14 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,8 +46,7 @@ fun SelectDialog(
             }
         ) {
             Surface(
-                shape = RoundedCornerShape(15.dp),
-                color = MaterialTheme.colorScheme.background
+                shape = RoundedCornerShape(15.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -63,7 +60,7 @@ fun SelectDialog(
                         )
                         Divider(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp, start = 4.dp, end = 4.dp, bottom = 4.dp)
+                            .padding(top = 16.dp, bottom = 4.dp)
                         )
                     }
                     LazyColumn(
@@ -72,31 +69,28 @@ fun SelectDialog(
                         items(
                             items = items,
                             key = { item -> item.id }
-                        ) {
+                        ) { category ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(10.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                                 onClick = {
-                                    onConfirm(it)
+                                    onConfirm(category)
                                     onClose()
                                 }
                             ) {
                                 Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
+                                    modifier = Modifier.fillMaxWidth().padding(8.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = it.name,
+                                        text = category.name,
                                         fontSize = 18.sp,
                                         modifier = Modifier.padding(start = 4.dp).weight(1f),
-                                        maxLines = 3,
+                                        maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     if (onSelectedItem != null) {
-                                        if (onSelectedItem(it)) {
+                                        if (onSelectedItem(category)) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.check_24),
                                                 contentDescription = "selected"
@@ -107,15 +101,11 @@ fun SelectDialog(
                             }
                         }
                     }
-                    Divider(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp, vertical = 8.dp)
-                    )
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        OutlinedButton(onClick = {
+                        TextButton(onClick = {
                             onClose()
                         }) {
                             Text(text = stringResource(id = R.string.cancel).uppercase())

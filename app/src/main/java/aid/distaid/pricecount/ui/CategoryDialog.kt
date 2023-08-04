@@ -10,11 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,8 +49,7 @@ fun CategoryDialog(
             }
         ) {
             Surface(
-                shape = RoundedCornerShape(15.dp),
-                color = MaterialTheme.colorScheme.background
+                shape = RoundedCornerShape(15.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -78,14 +76,14 @@ fun CategoryDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        OutlinedButton(onClick = {
+                        TextButton(onClick = {
                             onConfirm(text)
                             text = ""
                             onClose()
                         }) {
                             Text(text = confirmText.uppercase())
                         }
-                        OutlinedButton(onClick = {
+                        TextButton(onClick = {
                             text = ""
                             onClose()
                         }) {
