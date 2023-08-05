@@ -71,7 +71,7 @@ fun ProductItemBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                product.image?.let { image ->
+                product.imageBitmap?.let { image ->
                     Image(
                         bitmap = image.asImageBitmap(),
                         contentDescription = "userImage",

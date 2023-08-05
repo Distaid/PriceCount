@@ -86,11 +86,19 @@ fun EditProductScreen(
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+        val time = System.currentTimeMillis()
+
         editableProduct = if (uri != null) {
             val source = ImageDecoder.createSource(context.contentResolver, uri)
-            editableProduct.copy(image = ImageDecoder.decodeBitmap(source))
+            editableProduct.copy(
+                image = "${uri.lastPathSegment!!.split(":")[1]}_$time",
+                imageBitmap = ImageDecoder.decodeBitmap(source)
+            )
         } else {
-            editableProduct.copy(image = null)
+            editableProduct.copy(
+                image = null,
+                imageBitmap = null
+            )
         }
     }
 
@@ -157,7 +165,7 @@ fun EditProductScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    editableProduct.image?.let { image ->
+                    editableProduct.imageBitmap?.let { image ->
                         Image(
                             bitmap = image.asImageBitmap(),
                             contentDescription = "userImage",

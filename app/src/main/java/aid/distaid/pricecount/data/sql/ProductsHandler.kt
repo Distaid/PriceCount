@@ -3,14 +3,11 @@ package aid.distaid.pricecount.data.sql
 import aid.distaid.pricecount.data.models.Category
 import aid.distaid.pricecount.data.models.Product
 import aid.distaid.pricecount.getBoolean
-import aid.distaid.pricecount.toBitmap
-import aid.distaid.pricecount.toByteArray
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.core.database.getBlobOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 
@@ -26,7 +23,11 @@ class ProductsHandler(private val dbHandler: AidDbHandler) {
         values.put(IS_ACTIVE_COL, product.isActive)
         values.put(LINK_COL, product.link)
         values.put(DESCRIPTION_COL, product.description)
-        values.put(IMAGE_COL, product.image?.toByteArray())
+        values.put(IMAGE_COL, product.image)
+
+        product.image?.let { imageName ->
+            dbHandler.writeImage(product.imageBitmap!!, imageName)
+        }
 
         dbHandler.writableDatabase.insert(TABLE_NAME, null, values)
         dbHandler.writableDatabase.close()
@@ -43,13 +44,26 @@ class ProductsHandler(private val dbHandler: AidDbHandler) {
         values.put(IS_ACTIVE_COL, product.isActive)
         values.put(LINK_COL, if (product.link == "") null else product.link)
         values.put(DESCRIPTION_COL, if (product.description == "") null else product.description)
-        values.put(IMAGE_COL, product.image?.toByteArray())
+        values.put(IMAGE_COL, product.image)
+
+        val lastProduct = getById(product.id)
+        lastProduct?.image?.let { imageName ->
+            dbHandler.deleteImage(imageName)
+        }
+
+        product.image?.let { imageName ->
+            dbHandler.writeImage(product.imageBitmap!!, imageName)
+        }
 
         dbHandler.writableDatabase.update(TABLE_NAME, values, "id=${product.id}", null)
         dbHandler.writableDatabase.close()
     }
 
     fun delete(product: Product) {
+        product.image?.let { imageName ->
+            dbHandler.deleteImage(imageName)
+        }
+
         dbHandler.writableDatabase.delete(TABLE_NAME, "id=${product.id}", null)
         dbHandler.writableDatabase.close()
     }
@@ -75,11 +89,16 @@ class ProductsHandler(private val dbHandler: AidDbHandler) {
                     isActive = cursor.getBoolean(cursor.getColumnIndex(IS_ACTIVE_COL)),
                     link = cursor.getStringOrNull(cursor.getColumnIndex(LINK_COL)),
                     description = cursor.getStringOrNull(cursor.getColumnIndex(DESCRIPTION_COL)),
-                    image = cursor.getBlobOrNull(cursor.getColumnIndex(IMAGE_COL))?.toBitmap()
+                    image = cursor.getStringOrNull(cursor.getColumnIndex(IMAGE_COL)),
+                    imageBitmap = null
                 )
 
                 product.categoryId?.let {
                     product.category = dbHandler.categoriesHandler.getById(it)
+                }
+
+                product.image?.let {
+                    product.imageBitmap = dbHandler.readImage(it)
                 }
 
                 products.add(product)
@@ -107,11 +126,16 @@ class ProductsHandler(private val dbHandler: AidDbHandler) {
                 isActive = cursor.getBoolean(cursor.getColumnIndex(IS_ACTIVE_COL)),
                 link = cursor.getStringOrNull(cursor.getColumnIndex(LINK_COL)),
                 description = cursor.getStringOrNull(cursor.getColumnIndex(DESCRIPTION_COL)),
-                image = cursor.getBlobOrNull(cursor.getColumnIndex(IMAGE_COL))?.toBitmap()
+                image = cursor.getStringOrNull(cursor.getColumnIndex(IMAGE_COL)),
+                imageBitmap = null
             )
 
             product.categoryId?.let {
                 product.category = dbHandler.categoriesHandler.getById(it)
+            }
+
+            product.image?.let {
+                product.imageBitmap = dbHandler.readImage(it)
             }
         }
 
@@ -154,7 +178,7 @@ class ProductsHandler(private val dbHandler: AidDbHandler) {
                 "$IS_ACTIVE_COL INTEGER NOT NULL," +
                 "$LINK_COL TEXT," +
                 "$DESCRIPTION_COL TEXT," +
-                "$IMAGE_COL BLOB);"
+                "$IMAGE_COL TEXT);"
 
         db.execSQL(query)
     }

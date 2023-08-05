@@ -86,11 +86,19 @@ fun CreateItemScreen(
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+        val time = System.currentTimeMillis()
+
         newProduct = if (uri != null) {
             val source = ImageDecoder.createSource(context.contentResolver, uri)
-            newProduct.copy(image = ImageDecoder.decodeBitmap(source))
+            newProduct.copy(
+                image = "${uri.lastPathSegment!!.split(":")[1]}_$time",
+                imageBitmap = ImageDecoder.decodeBitmap(source)
+            )
         } else {
-            newProduct.copy(image = null)
+            newProduct.copy(
+                image = null,
+                imageBitmap = null
+            )
         }
     }
 
@@ -155,7 +163,7 @@ fun CreateItemScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    newProduct.image?.let { image ->
+                    newProduct.imageBitmap?.let { image ->
                         Image(
                             bitmap = image.asImageBitmap(),
                             contentDescription = "userImage",

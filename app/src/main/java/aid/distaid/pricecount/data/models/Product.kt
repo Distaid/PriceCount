@@ -13,9 +13,22 @@ data class Product(
     var isActive: Boolean,
     var link: String?,
     var description: String?,
-    var image: Bitmap?
+    var image: String?,
+    var imageBitmap: Bitmap?
 )
 
 fun createEmptyProduct(): Product {
-    return Product(0, "", 0f, "", "1", null, null, true, null, null, null)
+    return Product(
+        0,
+        "",
+        0f,
+        "",
+        "1",
+        null,
+        null,
+        true,
+        null,
+        null,
+        null,
+        null)
 }
